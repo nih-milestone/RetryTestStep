@@ -1,0 +1,32 @@
+name: 'Testing retry step'
+
+on:
+  workflow_dispatch:
+  push:
+  
+jobs:
+  testing-retry-step:
+    name: 'Testing'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout repo'
+        uses: actions/checkout@v4
+
+      - name: 'Build solution'
+        run: dotnet build TestRetryWorkflowTestStep.sln --configuration Release
+
+      - name: 'Run tests'
+        id: retry
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 2
+          max-attempts: 3
+          command: |
+            dotnet test TestRetryWorkflowTestStep.sln --configuration Release --no-build
+          on_retry_command: | 
+            echo "Retrying test step because it failed"
+
+      - name: 'Print results'
+        run: |
+            echo "Test step executed ${{ steps.retry.outputs.total_attempts }} times"     
+    

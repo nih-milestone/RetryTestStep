@@ -20,7 +20,7 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 2
-          max-attempts: 3
+          max_attempts: 3
           command: |
             dotnet test TestRetryWorkflowTestStep/TestRetryWorkflowTestStep.sln --configuration Release --no-build
           on_retry_command: | 
